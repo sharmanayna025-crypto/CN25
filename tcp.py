@@ -1,13 +1,3 @@
-"""
-Assignment 5: TCP Server and Client - INTERACTIVE INPUT MODE
-Type your messages in the input box that appears!
-Perfect for Google Colab
-
-HOW TO USE:
-1. Run this entire cell
-2. Input boxes will appear - type your messages there!
-"""
-
 import socket
 import threading
 import time
@@ -43,9 +33,9 @@ class TCPServer:
                     else:
                         raise
 
-            print(f"\n✅ Socket bound to {self.host}:{self.port}")
+            print(f"\nSocket bound to {self.host}:{self.port}")
             self.server_socket.listen(5)
-            print(f"✅ Server listening on port {self.port}")
+            print(f"Server listening on port {self.port}")
 
             self.running = True
 
@@ -55,7 +45,7 @@ class TCPServer:
             accept_thread.start()
 
         except Exception as e:
-            print(f"❌ Server failed: {e}")
+            print(f"Server failed: {e}")
             self.running = False
 
     def accept_connections(self):
@@ -64,7 +54,7 @@ class TCPServer:
                 self.server_socket.settimeout(1.0)
                 client_socket, client_address = self.server_socket.accept()
 
-                print(f"\n✅ Client connected from {client_address}")
+                print(f"\n Client connected from {client_address}")
 
                 # Handle client in thread
                 client_thread = threading.Thread(
@@ -94,7 +84,7 @@ class TCPServer:
                     break
 
                 message = data.decode().strip()
-                print(f"\n📩 Received from client: {message}")
+                print(f"\nReceived from client: {message}")
 
                 response = self.process_request(message)
 
@@ -103,7 +93,7 @@ class TCPServer:
                     break
 
                 client_socket.send(response.encode())
-                print(f"📤 Sent to client: {response}")
+                print(f"Sent to client: {response}")
 
         except:
             pass
@@ -118,7 +108,7 @@ class TCPServer:
         elif "DATE" in cmd:
             return f"Server date: {datetime.now().strftime('%Y-%m-%d')}"
         elif "HELLO" in cmd:
-            return "Hello from TCP Server! 👋"
+            return "Hello from TCP Server! "
         elif "QUIT" in cmd or "EXIT" in cmd:
             return "DISCONNECT"
         else:
@@ -150,33 +140,33 @@ class TCPClient:
 
             # Receive welcome message
             welcome = self.client_socket.recv(1024).decode()
-            print(f"\n✅ Connected! Server says: {welcome}\n")
+            print(f"\n Connected! Server says: {welcome}\n")
 
             self.connected = True
             return True
 
         except Exception as e:
-            print(f"❌ Connection failed: {e}")
+            print(f" Connection failed: {e}")
             return False
 
     def send(self, message):
         if not self.connected:
-            print("❌ Not connected!")
+            print(" Not connected!")
             return None
 
         try:
-            print(f"\n💬 You: {message}")
+            print(f"\n You: {message}")
             self.client_socket.send(message.encode())
 
             # Receive response
             self.client_socket.settimeout(5.0)
             response = self.client_socket.recv(1024).decode()
-            print(f"📨 Server: {response}\n")
+            print(f" Server: {response}\n")
 
             return response
 
         except Exception as e:
-            print(f"❌ Error: {e}")
+            print(f" Error: {e}")
             return None
 
     def close(self):
@@ -196,20 +186,20 @@ def run_interactive_tcp():
     print("*" * 60)
 
     # Start server
-    print("\n🚀 Starting server...")
+    print("\n Starting server...")
     server = TCPServer('127.0.0.1', 12345)
     server.start()
 
     time.sleep(1)
 
     if not server.running:
-        print("❌ Server failed to start")
+        print("Server failed to start")
         return
 
-    print(f"\n✅ SERVER READY on port {server.port}")
+    print(f"\n SERVER READY on port {server.port}")
 
     # Connect client
-    print("\n🔗 Connecting client...")
+    print("\n Connecting client...")
     client = TCPClient('127.0.0.1', server.port)
 
     if not client.connect():
@@ -217,7 +207,7 @@ def run_interactive_tcp():
         return
 
     print("=" * 60)
-    print("📋 AVAILABLE COMMANDS:")
+    print(" AVAILABLE COMMANDS:")
     print("  - TIME  : Get server time")
     print("  - DATE  : Get server date")
     print("  - HELLO : Get greeting")
@@ -229,7 +219,7 @@ def run_interactive_tcp():
     while True:
         try:
             # THIS IS WHERE YOU TYPE! 👇
-            message = input("\n💬 Type your message (or 'quit' to exit): ")
+            message = input("\n Type your message (or 'quit' to exit): ")
 
             if not message.strip():
                 continue
@@ -237,16 +227,16 @@ def run_interactive_tcp():
             response = client.send(message)
 
             if response and ("Goodbye" in response or message.upper() in ["QUIT", "EXIT"]):
-                print("\n👋 Closing connection...")
+                print("\n Closing connection...")
                 break
 
         except KeyboardInterrupt:
-            print("\n\n⚠️ Interrupted by user")
+            print("\n\n Interrupted by user")
             break
         except EOFError:
             # Colab specific: when input() doesn't work, switch to demo mode
-            print("\n⚠️ Interactive input not available in this environment")
-            print("🤖 Switching to demo mode...\n")
+            print("\n Interactive input not available in this environment")
+            print(" Switching to demo mode...\n")
 
             demo_messages = ["HELLO", "TIME", "DATE", "Testing TCP", "QUIT"]
             for msg in demo_messages:
@@ -259,7 +249,7 @@ def run_interactive_tcp():
     server.stop()
 
     print("\n" + "*" * 60)
-    print("     ✅ Session completed!")
+    print("   Session completed!")
     print("*" * 60)
 
 
