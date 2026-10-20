@@ -1,9 +1,9 @@
 import socket
 
-# Create UDP socket
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+client_socket.settimeout(5)
 
-server_address = ("localhost", 9999)
+server_address = ("127.0.0.1", 9999)
 
 print("UDP Client started...")
 
@@ -15,37 +15,26 @@ while True:
 
     choice = input("Enter your choice: ")
 
-    # Validate choice
     if choice == "4":
-        print("Client closed.")
         break
 
     if choice not in ("1", "2", "3"):
-        print("Invalid choice. Please enter 1, 2, or 3.")
+        print("Invalid choice")
         continue
 
     message = input("Enter a string: ")
-
-    # Combine choice and message
     data = choice + "|" + message
 
     try:
-        # Send data to server
         client_socket.sendto(data.encode(), server_address)
-
-        # Receive response
-        response, server_address = client_socket.recvfrom(1024)
-
+        response, address = client_socket.recvfrom(1024)
         print("Server response:", response.decode())
 
-    except Exception as e:
-        print("Client error:", e)
-        break
+    except socket.timeout:
+        print("ERROR: Server did not respond. Check that udps.py is running.")
 
-    again = input("\nDo you want to continue? (yes/no): ")
-
+    again = input("Continue? (yes/no): ")
     if again.lower() == "no":
         break
 
 client_socket.close()
-
