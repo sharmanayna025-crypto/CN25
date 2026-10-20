@@ -1,50 +1,24 @@
-
 import socket
 
-# Create UDP socket
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+server.bind(("127.0.0.1", 9999))
 
-server_address = ("localhost", 9999)
-
-# Bind server to address and port
-server_socket.bind(server_address)
-
-print("UDP Server started...")
-print("Server is waiting for client...")
+print("UDP Server is running on port 9999...")
 
 while True:
-    try:
-        data, client_address = server_socket.recvfrom(1024)
+    data, address = server.recvfrom(1024)
+    print("Received:", data.decode())
 
-        received_data = data.decode()
+    choice, message = data.decode().split("|", 1)
 
-        # Check whether the message contains "|"
-        if "|" not in received_data:
-            result = "Invalid data format"
-            server_socket.sendto(result.encode(), client_address)
-            continue
+    if choice == "1":
+        result = message.lower()
+    elif choice == "2":
+        result = message.upper()
+    elif choice == "3":
+        result = message[::-1]
+    else:
+        result = "Invalid choice"
 
-        choice, message = received_data.split("|", 1)
-
-        print("\nClient connected from:", client_address)
-        print("Message received:", message)
-
-        if choice == "1":
-            result = message.lower()
-
-        elif choice == "2":
-            result = message.upper()
-
-        elif choice == "3":
-            result = message[::-1]
-
-        else:
-            result = "Invalid choice"
-
-        # Send result back to client
-        server_socket.sendto(result.encode(), client_address)
-
-        print("Response sent:", result)
-
-    except Exception as e:
-        print("Server error:", e)
+    server.sendto(result.encode(), address)
+    print("Sent:", result)
